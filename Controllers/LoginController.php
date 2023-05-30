@@ -1,8 +1,9 @@
 <?php
+require_once dirname(__DIR__)."/Core/Libs/View.php";
 
 class Login {
     public function index():void {
-        echo "Login->index";
+        View::get('login', "TEST");
     }
 
     public function fuga():void {

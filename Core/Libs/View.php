@@ -7,7 +7,7 @@ class View {
         self::$_viewPath = dirname(__FILE__, 3).DIRECTORY_SEPARATOR."Views".DIRECTORY_SEPARATOR;
     }
     
-    public static function get(string $_viewName, mixed $_default = null) {
+    public static function get(string $_viewName, mixed $_default = null):void {
         self::_init();
         $param = $_default;
         require_once self::$_viewPath.$_viewName.".html";

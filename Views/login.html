@@ -4,10 +4,21 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>社員管理&nbsp;|&nbsp;ログイン画面</title>
+    <title>社員管理システム&nbsp;|&nbsp;ログイン</title>
 </head>
 <body>
-    <h1>Login.html</h1>
-    <?= $param ?>
+    <h1>社員管理システム</h1>
+    <form action="/login/check" method="post">
+        <label for="email">メールアドレス</label><br>
+        <input type="email" name="email" id="email"><br>
+        <label for="password">パスワード</label><br>
+        <input type="password" name="password" id="password"><br>
+        <button type="submit">送信</button>
+    </form>
+    <?php if($param) { ?>
+        <?php foreach($param as $p) { ?>
+            <?= $p ?>
+        <?php } ?>
+    <?php } ?>
 </body>
 </html>

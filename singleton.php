@@ -1,0 +1,160 @@
+<?php
+
+/*
+    Use the static method getInstance to get the object.
+*/
+
+class Session
+{
+    const SESSION_STARTED = TRUE;
+    const SESSION_NOT_STARTED = FALSE;
+    
+    // The state of the session
+    private $sessionState = self::SESSION_NOT_STARTED;
+    
+    // THE only instance of the class
+    private static $instance;
+    
+    
+    private function __construct() {}
+    
+    
+    /**
+    *    Returns THE instance of 'Session'.
+    *    The session is automatically initialized if it wasn't.
+    *    
+    *    @return    object
+    **/
+    
+    public static function getInstance()
+    {
+        if ( !isset(self::$instance))
+        {
+            self::$instance = new self;
+        }
+        
+        self::$instance->startSession();
+        
+        return self::$instance;
+    }
+    
+    
+    /**
+    *    (Re)starts the session.
+    *    
+    *    @return    bool    TRUE if the session has been initialized, else FALSE.
+    **/
+    
+    public function startSession()
+    {
+        if ( $this->sessionState == self::SESSION_NOT_STARTED )
+        {
+            $this->sessionState = session_start();
+        }
+        
+        return $this->sessionState;
+    }
+    
+    
+    /**
+    *    Stores datas in the session.
+    *    Example: $instance->foo = 'bar';
+    *    
+    *    @param    name    Name of the datas.
+    *    @param    value    Your datas.
+    *    @return    void
+    **/
+    
+    // アクセス不能なプロパティにデータを格納しようとしたとき
+    public function __set( $name , $value )
+    {
+        $_SESSION[$name] = $value;
+    }
+    
+    
+    /**
+    *    Gets datas from the session.
+    *    Example: echo $instance->foo;
+    *    
+    *    @param    name    Name of the datas to get.
+    *    @return    mixed    Datas stored in session.
+    **/
+    
+    // アクセス不能なプロパティからデータを読み込もうとしたとき
+    public function __get( $name )
+    {
+        if ( isset($_SESSION[$name]))
+        {
+            return $_SESSION[$name];
+        }
+    }
+    
+    // アクセス不能なプロパティに対してisset()、あるいは、empty()を実行しようとしたとき
+    public function __isset( $name )
+    {
+        return isset($_SESSION[$name]);
+    }
+    
+    // アクセス不能なプロパティに対してunset()を実行しようとしたとき
+    public function __unset( $name )
+    {
+        unset( $_SESSION[$name] );
+    }
+    
+    
+    /**
+    *    Destroys the current session.
+    *    
+    *    @return    bool    TRUE is session has been deleted, else FALSE.
+    **/
+    
+    public function destroy()
+    {
+        if ( $this->sessionState == self::SESSION_STARTED )
+        {
+            $this->sessionState = !session_destroy();
+            unset( $_SESSION );
+            
+            return !$this->sessionState;
+        }
+        
+        return FALSE;
+    }
+}
+
+/*
+    Examples:
+*/
+
+// We get the instance
+$data = Session::getInstance();
+
+// Let's store datas in the session
+$data->nickname = 'Someone';
+$data->age = 18;
+
+// Let's display datas
+printf( '<p>My name is %s and I\'m %d years old.</p>' , $data->nickname , $data->age );
+
+/*
+    It will display:
+    
+    Array
+    (
+        [nickname] => Someone
+        [age] => 18
+    )
+*/
+
+printf( '<pre>%s</pre>' , print_r( $_SESSION , TRUE ));
+
+// TRUE
+var_dump( isset( $data->nickname ));
+
+// We destroy the session
+$data->destroy();
+
+// FALSE
+var_dump( isset( $data->nickname ));
+
+?>
